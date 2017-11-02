@@ -121,14 +121,11 @@ float read_distance()
 
 int main(){
 
-  // Configurar timer 0
-  // Prescaler = 1
+  // Configurar timer 1
+  // Prescaler = 8
   // Modo normal
-  TCCR0A = 0b00000000;
-  TCCR0B = 0b00000001;
-
-  // Habilitar interrupcao por estouro do TC0 (timer 0)
-  TIMSK0 = 0b00000001;
+  TCCR1A = 0b00000000;
+  TCCR1B = 0b00000001;
 
   // Habilitar chave geral de interrupcoes
   sei();

@@ -10,6 +10,11 @@
 
 	Trabalho 1: Dado digital com display de 7 segmentos
 
+	A implementação abaixo considera o display de 7 segmentos do simulador
+	Tinkercad. O circuito criado para essa implementação pode ser acessado
+	em:
+	https://www.tinkercad.com/things/6WaMPJDVwhb-copy-of-super-leelo-curcan/editel?sharecode=CpFDK-5mgiZt_2NilcRxEYrf70NUjAJtQKUzHgtzrlY=
+
 	Um botão foi colocado em PB0 (pino 8 do Arduino) para gerar uma inter-
 	rupção que mostra o valor de "die_value" no display. Essa variável é
 	constantemente atualizada por uma interrupção de timer, que a faz ro-
@@ -57,7 +62,6 @@ ISR(TIMER0_OVF_vect)
 ISR(PCINT0_vect)
 {
   PORTD = pgm_read_byte(&displaymap[die_value]);
-  _delay_ms(500); // Para desconsiderar ruídos ao se pressionar o botão
 }
 
 int main(void)
