@@ -1,4 +1,34 @@
-#define F_CPU 16000000UL
+/*
+  Universidade Estadual de Maringá
+  Centro de Tecnologia
+  Departamento de Informática
+  6913 - Sistemas Digitais
+  Professor Rogério Calvo
+
+  Aluno: Rafael Cortez Sanchez, RA 82357
+
+  Trabalho 2: Sensor de distancia com ultrassom
+
+  A implementação abaixo utiliza um sensor de distância por ultrassom ligado a
+  uma placa Arduino Uno. Ao ser acionado, o módulo de sensor envia um pulso à
+  porta PB0 do microcontrolador, sendo que a distância percebida pelo sensor é
+  proporcional à largura desse pulso.
+
+  Para calcular a largura do pulso recebido pelo sensor, foi configurado o
+  timer 1 da MCU para gerar interrupções por captura de sinal, tanto para
+  subida quanto para descida desse. O intervalo entre esses eventos permite
+  calcular a largura do pulso em contagens do timer, que podem ser convertidas
+  em tempo, considerando-se que a frequência de 16MHz do clock interno é
+  constante. Com a largura do pulso em microssegundos, enfim, calcula-se a
+  distância entre o objeto percebido e o sensor.
+
+  O valor de distância obtido pelo sensor é mostrado em um display de LCD 2x16.
+  Além disso, três LEDs indicam níveis discretos de proximidade do objeto: O
+  LED1 acende quando o objeto está mais próximo que uma distância d1, o LED2
+  acende quando o objeto está entre d1 e d2, e o LED3 acende quando o objeto
+  está além de d2. Se o objeto está fora do alcance do sensor, acende-se o LED
+  3.
+*/
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -80,6 +110,7 @@ ISR(TIMER1_CAPT_vect)
   }
 }
 
+// Envia comandos para o LCD
 void cmd_LCD(unsigned char c, char cd){
   if(cd==0)
     clr_bit(CONTR_LCD, RS);
@@ -106,6 +137,7 @@ void cmd_LCD(unsigned char c, char cd){
     _delay_ms(2);
 }
 
+// Inicializa LCD com interface de 4 bits
 void inic_LCD_4bits(){
   clr_bit(CONTR_LCD,RS);
   clr_bit(CONTR_LCD,E);
@@ -138,11 +170,13 @@ void inic_LCD_4bits(){
   cmd_LCD(0x80,0);
 }
 
+// Escreve mensagem no LCD a partir do cursor
 void escreve_LCD(char *c){
   for(; *c!=0;c++)
     cmd_LCD(*c,1);
 }
 
+// Como escreve_LCD, mas para strings contidas na memoria flash
 void escreve_LCD_Flash(const char *c){
   for(;pgm_read_byte(&(*c))!=0;c++)
     cmd_LCD(pgm_read_byte(&(*c)),1);
@@ -177,11 +211,11 @@ int main()
   uint16_t distancia_mm;
   char distancia_texto[16];
   // Configurar timer 1 em modo normal
-  // Prescaler = 8
+  // Prescaler = 1
   // Com cancelador de ruido para captura
   // Dispara evento de captura na borda de subida
   TCCR1A = 0b00000000;
-  TCCR1B = 0b11000010;
+  TCCR1B = 0b11000001;
 
   // Habilitar interrupcao por estouro do TC1 (timer 1)
   // Habilitar interrupcao de TC1 por captura de entrada
@@ -190,24 +224,23 @@ int main()
   // Habilitar chave geral de interrupcoes
   sei();
 
-  // Pinos de PORTD como saida para o display de LCD
+  // Pinos de PORTD como saida para o display de LCD e para os LEDs de distancia
   DDRD = 0xFF;
 
   // Pinos de PORTB controlam o LCD e o sensor de ultrassom
-  // PB0 definido como entrada para receber interrupcoes do ECHO
+  // PB0 definido como entrada para receber interrupcoes TC1 do ECHO (ultrassom)
   DDRB = 0b11111110;
 
   // Inicializa display e escreve mensagem inicial "Distancia(mm):"
   inic_LCD_4bits();
   escreve_LCD_Flash(mensagem);
-  cmd_LCD(0xC0,0);
   for(;;)
   {
     pulso_trigger(); // Envia pulso ao trigger
     _delay_ms(500); // Tempo grande para facilitar visualizacao do display e dos leds
     distancia_mm = (uint16_t)((double)largura_de_pulso / 5.8);
     sprintf(distancia_texto, "%015d", distancia_mm);
-    cmd_LCD(0xC0,0); // Posiciona cursor na segunda linha
+    cmd_LCD(0xC0,0); // Posiciona cursor no comeco da segunda linha
     escreve_LCD(distancia_texto); // Escreve distancia
     set_led_distancia(distancia_mm); // Aciona led de distancia
   }
