@@ -5,7 +5,8 @@
   6913 - Sistemas Digitais
   Professor Rogério Calvo
 
-  Aluno: Rafael Cortez Sanchez, RA 82357
+  Alunos: Rafael Cortez Sanchez, RA 82357
+	  Andre Dias Menegazzo Pereira, RA 47735
 
   Trabalho 2: Sensor de distancia com ultrassom
 
@@ -51,8 +52,8 @@
 #define LED2 PD2
 #define LED3 PD3
 
-#define DISTANCIA_MEDIA_BEGIN 30
-#define DISTANCIA_MEDIA_END 40
+#define DISTANCIA_MEDIA_BEGIN 70
+#define DISTANCIA_MEDIA_END 120
 
 #define pulso_enable() _delay_us(1); set_bit(CONTR_LCD, E); _delay_us(1); clr_bit(CONTR_LCD, E); _delay_us(45);
 #define pulso_trigger() set_bit(PORTB, TRIGGER); _delay_us(15); clr_bit(PORTB, TRIGGER);
