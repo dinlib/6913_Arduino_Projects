@@ -3,7 +3,7 @@
   Centro de Tecnologia
   Departamento de Informática
   6913 - Sistemas Digitais
-  Professor Rogério Calvo
+  Professor Rodrigo Calvo
 
   Aluno: Rafael Cortez Sanchez, RA 82357
 

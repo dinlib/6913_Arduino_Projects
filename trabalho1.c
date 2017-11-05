@@ -3,7 +3,7 @@
 	Centro de Tecnologia
 	Departamento de Informática
 	6913 - Sistemas Digitais
-	Professor Rogério Calvo
+	Professor Rodrigo Calvo
 
 	Alunos:	Luis Paulo de Araújo Afonso, RA 77429 
 		Rafael Cortez Sanchez, RA 82357
